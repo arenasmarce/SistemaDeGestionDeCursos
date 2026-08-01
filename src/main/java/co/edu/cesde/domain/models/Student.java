@@ -3,11 +3,11 @@ package co.edu.cesde.domain.models;
 import java.time.LocalDate;
 
 public class Student {
-    Long id;
-    String firstName;
-    String lastName;
-    String email;
-    LocalDate birthDate;
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private LocalDate birthDate;
 
     public Student(Long id, String firstName, String lastName, String email, LocalDate birthDate) {
         this.id = id;
