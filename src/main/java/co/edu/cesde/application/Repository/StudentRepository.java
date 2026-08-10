@@ -1,4 +1,4 @@
-package co.edu.cesde.application;
+package co.edu.cesde.application.Repository;
 
 import co.edu.cesde.domain.models.Student;
 

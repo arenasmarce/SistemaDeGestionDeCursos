@@ -1,4 +1,4 @@
-package co.edu.cesde.application;
+package co.edu.cesde.application.Repository;
 
 
 import co.edu.cesde.domain.models.Course;
@@ -16,3 +16,5 @@ public interface CurseRepository {
     boolean existsById(Long id);
 
 }
+
+

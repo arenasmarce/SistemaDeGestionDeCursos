@@ -1,5 +1,4 @@
-package co.edu.cesde.application;
-
+package co.edu.cesde.application.Repository;
 import co.edu.cesde.domain.models.Enrollment;
 
 import java.util.List;
@@ -7,9 +6,11 @@ import java.util.Optional;
 
 public interface EnrollmentRepository {
     Enrollment save(Enrollment enrollment);
-    Optional<Enrollment> findById(Long id);
-    List<Enrollment> findAll();
-    Enrollment update(Enrollment enrollment);
-    void deleteById(Long id);
     boolean existsById(Long id);
+    Optional<Enrollment> findById(Long id);
+    void deleteById(Long id);
+    Enrollment update(Enrollment enrollment);
+    List<Enrollment> findAll();
+
+
 }
