@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface StudentRepository {
     Student save(Student student);
-    Optional<Student> findById(Long id);
+    Optional<Student> findById(Long StudentId);
     List<Student> findAll();
     Student update(Student student);
-    void deleteById(Long id);
-    boolean existsById(Long id);
+    void deleteById(Long StudentId);
+    boolean existsById(Long StudentId);
 }
