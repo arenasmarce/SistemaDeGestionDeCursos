@@ -3,7 +3,6 @@ package co.edu.cesde.application.service;
 import co.edu.cesde.application.Repository.CourseRepository;
 import co.edu.cesde.application.Repository.EnrollmentRepository;
 import co.edu.cesde.application.Repository.StudentRepository;
-import co.edu.cesde.application.dto.EnrollmentDTO;
 import co.edu.cesde.application.Excepciones.CourseNotFoundException;
 import co.edu.cesde.application.Excepciones.EnrollmentNotFoundException;
 import co.edu.cesde.application.Excepciones.StudentNotFoundException;
@@ -11,21 +10,26 @@ import co.edu.cesde.domain.models.Course;
 import co.edu.cesde.domain.models.Enrollment;
 import co.edu.cesde.domain.models.EnrollmentStatus;
 import co.edu.cesde.domain.models.Student;
+import co.edu.cesde.infrastructure.Repositories.CourseJpaRepository;
+import co.edu.cesde.infrastructure.Repositories.EnrollmentJpaRepository;
+import co.edu.cesde.infrastructure.Repositories.StudentJpaRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
+@Service
+public class EnrollmentService implements EnrollmentRepository {
 
-public class EnrollmentService {
-
-    private final EnrollmentRepository enrollmentRepository;
-    private final StudentRepository studentRepository;
-    private final CourseRepository courseRepository;
+    private final EnrollmentJpaRepository enrollmentRepository;
+    private final StudentJpaRepository studentRepository;
+    private final CourseJpaRepository courseRepository;
 
     public EnrollmentService(
-            EnrollmentRepository enrollmentRepository,
-            StudentRepository studentRepository,
-            CourseRepository courseRepository) {
+            EnrollmentJpaRepository enrollmentRepository,
+            StudentJpaRepository studentRepository,
+            CourseJpaRepository courseRepository) {
 
         this.enrollmentRepository = enrollmentRepository;
         this.studentRepository = studentRepository;
@@ -33,7 +37,8 @@ public class EnrollmentService {
     }
 
     // CREAR INSCRIPCIÓN
-    public EnrollmentDTO save(Enrollment enrollment) {
+    @Override
+    public Enrollment save(Enrollment enrollment) {
 
 
         Student student = studentRepository
@@ -51,34 +56,45 @@ public class EnrollmentService {
         enrollment.setStudent(student);
         enrollment.setCourse(course);
 
-        Enrollment savedEnrollment =
-                enrollmentRepository.save(enrollment);
+        enrollment.setStatus(EnrollmentStatus.ACTIVE);
 
-        return toDTO(savedEnrollment);
+        enrollment.setCreatedAt(java.time.LocalDateTime.now());
+        enrollment.setUpdatedAt(java.time.LocalDateTime.now());
+
+        return enrollmentRepository.save(enrollment);
     }
 
     // CONSULTAR
-    public EnrollmentDTO findById(String id) {
+    @Override
+    public Optional<Enrollment> findById(Long id) {
 
-        Enrollment enrollment = enrollmentRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new EnrollmentNotFoundException(id));
-
-        return toDTO(enrollment);
+        return enrollmentRepository.findById(id);
     }
 
     // LISTAR
-    public List<EnrollmentDTO> findAll() {
+    @Override
+    public List<Enrollment> findAll() {
 
-        return enrollmentRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return enrollmentRepository.findAll();
+
+    }
+
+    @Override
+    public boolean existsById(Long id){
+        return enrollmentRepository.existsById(id);
+
+    }
+
+    @Override
+    public Enrollment update(Enrollment enrollment){
+        if (!enrollmentRepository.existsById(enrollment.getId())){
+            throw new EnrollmentNotFoundException(enrollment.getId());
+        }
+        return enrollmentRepository.save(enrollment);
     }
 
     // CANCELAR INSCRIPCIÓN
-    public EnrollmentDTO cancel(String id) {
+    public Enrollment cancel(Long id) {
 
         Enrollment enrollment = enrollmentRepository
                 .findById(id)
@@ -88,13 +104,13 @@ public class EnrollmentService {
         enrollment.setStatus(EnrollmentStatus.CANCELLED);
 
         Enrollment updatedEnrollment =
-                enrollmentRepository.update(enrollment);
+                enrollmentRepository.save(enrollment);
 
-        return toDTO(updatedEnrollment);
+        return enrollmentRepository.save(enrollment);
     }
 
     // ELIMINAR
-    public void delete(String id) {
+    public void deleteById(Long id) {
 
         if (!enrollmentRepository.existsById(id)) {
             throw new EnrollmentNotFoundException(id);
@@ -103,33 +119,5 @@ public class EnrollmentService {
         enrollmentRepository.deleteById(id);
     }
 
-    // CONVERTIR ENROLLMENT → DTO
-    private EnrollmentDTO toDTO(Enrollment enrollment) {
 
-        Student student = enrollment.getStudent();
-        Course course = enrollment.getCourse();
-
-        return new EnrollmentDTO(
-                enrollment.getId(),
-                student.getFirstName() + " " + student.getLastName(),
-                course.getName(),
-                enrollment.getCreatedAt(),
-                enrollment.getStatus()
-        );
-    }
-
-    // CONVERTIR ENROLLMENT → DTO
-    private EnrollmentDTO toDTO(
-            Enrollment enrollment,
-            Student student,
-            Course course) {
-
-        return new EnrollmentDTO(
-                enrollment.getId(),
-                student.getFirstName() + " " + student.getLastName(),
-                course.getName(),
-                enrollment.getCreatedAt(),
-                enrollment.getStatus()
-        );
-    }
 }
