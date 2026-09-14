@@ -1,5 +1,6 @@
 package co.edu.cesde.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +23,7 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id_pk")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long studentId;
 
     @NotEmpty

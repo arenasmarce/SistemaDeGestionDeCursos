@@ -12,4 +12,5 @@ public interface StudentRepository {
     Student update(Student student);
     void deleteById(Long StudentId);
     boolean existsById(Long StudentId);
+    boolean existsByEmail(String email);
 }

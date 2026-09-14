@@ -1,4 +1,4 @@
-package co.edu.cesde.application.Excepciones;
+package co.edu.cesde.application.exception;
 
 public class EnrollmentNotFoundException extends BusinessException {
     public EnrollmentNotFoundException(Long id) {

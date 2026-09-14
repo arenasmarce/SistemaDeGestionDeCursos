@@ -1,17 +1,17 @@
 package co.edu.cesde.application.service;
 
 import co.edu.cesde.application.Repository.CourseRepository;
-import co.edu.cesde.application.Excepciones.CourseNotFoundException;
+import co.edu.cesde.application.exception.CourseCodeAlreadyExistsException;
+import co.edu.cesde.application.exception.CourseNotFoundException;
 import co.edu.cesde.domain.models.Course;
-import co.edu.cesde.infrastructure.Repositories.CourseJpaRepository;
+import co.edu.cesde.infrastructure.repositories.CourseJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class  CourseService implements CourseRepository {
+public class CourseService implements CourseRepository {
 
     private final CourseJpaRepository courseRepository;
 
@@ -23,13 +23,16 @@ public class  CourseService implements CourseRepository {
     @Override
     public Course save(Course course) {
 
+        if (courseRepository.existsByCode(course.getCode())) {
+            throw new CourseCodeAlreadyExistsException(course.getCode());
+        }
 
         return courseRepository.save(course);
-
     }
 
+    // VERIFICAR SI EXISTE
     @Override
-    public boolean existsById(Long id){
+    public boolean existsById(Long id) {
         return courseRepository.existsById(id);
     }
 
@@ -37,8 +40,13 @@ public class  CourseService implements CourseRepository {
     @Override
     public Optional<Course> findById(Long id) {
 
-        return courseRepository.findById(id);
+        Optional<Course> course = courseRepository.findById(id);
 
+        if (course.isEmpty()) {
+            throw new CourseNotFoundException(id);
+        }
+
+        return course;
     }
 
     // LISTAR
@@ -52,9 +60,15 @@ public class  CourseService implements CourseRepository {
     @Override
     public Course update(Course course) {
 
-
         if (!courseRepository.existsById(course.getId())) {
             throw new CourseNotFoundException(course.getId());
+        }
+
+        if (courseRepository.existsByCodeAndIdNot(
+                course.getCode(),
+                course.getId())) {
+
+            throw new CourseCodeAlreadyExistsException(course.getCode());
         }
 
         return courseRepository.save(course);
@@ -70,6 +84,4 @@ public class  CourseService implements CourseRepository {
 
         courseRepository.deleteById(id);
     }
-
-
 }

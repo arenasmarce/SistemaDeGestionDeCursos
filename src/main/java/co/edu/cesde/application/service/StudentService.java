@@ -1,9 +1,10 @@
 package co.edu.cesde.application.service;
 
 import co.edu.cesde.application.Repository.StudentRepository;
-import co.edu.cesde.application.Excepciones.StudentNotFoundException;
+import co.edu.cesde.application.exception.StudentAlreadyExistsException;
+import co.edu.cesde.application.exception.StudentNotFoundException;
 import co.edu.cesde.domain.models.Student;
-import co.edu.cesde.infrastructure.Repositories.StudentJpaRepository;
+import co.edu.cesde.infrastructure.repositories.StudentJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +22,26 @@ public class StudentService implements StudentRepository {
     // CREAR
     @Override
     public Student save(Student student) {
+        if (student == null) {
+            throw new IllegalArgumentException("El estudiante no puede ser null");
+        }
+        if (studentRepository.existsByEmail(student.getEmail())) {
+            throw new StudentAlreadyExistsException(
+                    "Ya existe un estudiante con el email: " + student.getEmail()
+            );
+        }
+
+
         return studentRepository.save(student);
     }
 
     // CONSULTAR POR ID
     @Override
     public Optional<Student> findById(Long studentId) {
+
+        if (!studentRepository.existsById(studentId)) {
+            throw new StudentNotFoundException(studentId);
+        }
         return studentRepository.findById(studentId);
 
     }
@@ -40,7 +55,9 @@ public class StudentService implements StudentRepository {
     // ACTUALIZAR
     @Override
     public Student update(Student student) {
-
+        if (student == null) {
+            throw new IllegalArgumentException("El estudiante no puede ser null");
+        }
         if (!studentRepository.existsById(student.getStudentId())) {
             throw new StudentNotFoundException(student.getStudentId());
         }
@@ -48,10 +65,15 @@ public class StudentService implements StudentRepository {
         return studentRepository.save(student);
     }
 
-    // EXISTE
+    // EXISTE POR ID
     @Override
     public boolean existsById(Long studentId) {
         return studentRepository.existsById(studentId);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return studentRepository.existsByEmail(email);
     }
 
     // ELIMINAR

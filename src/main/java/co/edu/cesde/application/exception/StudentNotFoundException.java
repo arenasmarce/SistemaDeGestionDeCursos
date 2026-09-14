@@ -1,8 +1,8 @@
-package co.edu.cesde.application.Excepciones;
+package co.edu.cesde.application.exception;
 
 public class StudentNotFoundException extends BusinessException {
 
     public StudentNotFoundException(Long id) {
-        super("Student not found: " + id);
+        super("No existe un estudiante con el id: " + id );
     }
 }

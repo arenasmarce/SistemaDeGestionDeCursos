@@ -1,4 +1,4 @@
-package co.edu.cesde.application.Excepciones;
+package co.edu.cesde.application.exception;
 
 public class CourseNotFoundException extends BusinessException{
     public CourseNotFoundException(Long id) {
