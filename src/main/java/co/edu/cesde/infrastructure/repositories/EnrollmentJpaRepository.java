@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
+public interface EnrollmentJpaRepository extends JpaRepository<Enrollment, Long> {
+    boolean existsByStudentStudentIdAndCourseId(Long studentId, Long courseId);
+    boolean existsByStudentStudentIdAndCourseIdAndIdNot(Long studentId, Long courseId, Long id);
 
-
-public interface EnrollmentJpaRepository extends JpaRepository<Enrollment,Long> {
 }
