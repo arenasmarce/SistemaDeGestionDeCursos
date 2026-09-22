@@ -51,7 +51,7 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCourseById(@PathVariable Long id) {
 
-        try {
+
 
             var courseOptional = courseService.findById(id);
             Course course = courseOptional.get();
@@ -68,18 +68,12 @@ public class CourseController {
                     .status(HttpStatus.OK)
                     .body(response);
 
-        } catch (CourseNotFoundException e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
     }
 
     @PostMapping
     public ResponseEntity<Object> save( @Valid @RequestBody CreateCourseDto course) {
 
-        try {
+
             Course newCourse = new Course(
                     course.code(),
                     course.name(),
@@ -98,19 +92,6 @@ public class CourseController {
                     .status(HttpStatus.CREATED)
                     .body(response);
 
-
-        } catch (CourseCodeAlreadyExistsException e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(e.getMessage());
-
-        }catch (IllegalArgumentException e){
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-
-        }
     }
 
 
@@ -120,7 +101,6 @@ public class CourseController {
             @PathVariable Long id,
             @RequestBody Course course) {
 
-        try {
 
             course.setId(id);
 
@@ -138,38 +118,19 @@ public class CourseController {
                     .status(HttpStatus.OK)
                     .body(response);
 
-        } catch (CourseNotFoundException e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-
-        } catch (CourseCodeAlreadyExistsException e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(e.getMessage());
-        }
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id) {
 
-        try {
+
 
             courseService.deleteById(id);
 
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .build();
-
-        } catch (CourseNotFoundException e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
     }
 
 

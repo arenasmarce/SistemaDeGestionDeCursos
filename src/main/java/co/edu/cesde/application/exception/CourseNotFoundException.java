@@ -1,6 +1,6 @@
 package co.edu.cesde.application.exception;
 
-public class CourseNotFoundException extends BusinessException{
+public class CourseNotFoundException extends ResourceNotFoundException{
     public CourseNotFoundException(Long id) {
         super("No existe un curso con id :" + id);
     }
